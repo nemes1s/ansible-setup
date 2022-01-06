@@ -1,0 +1,38 @@
+---
+  - name: "Installing console utils"
+    hosts: localhost
+    connection: local 
+    tasks:
+
+    - name: "install fzf"
+      shell: "brew install fzf"
+      register: "output"
+    
+    - name: "install bat"
+      shell: "brew install bat"
+      register: "output"
+    
+    - name: "install fd"
+      shell: "brew install fd"
+      register: "output"
+    
+    - name: "install ncdu"
+      shell: "brew install ncdu"
+      register: "output"
+
+    - name: "install procs"
+      shell: "brew install procs"
+      register: "output"
+
+    - name: "install tldr"
+      shell: "brew install tldr"
+      register: "output"
+
+    - name: "install ripgrep"
+      shell: "brew install ripgrep"
+      register: "output"
+
+
+    # TODO: add aliases to .zshrc
+
+    - debug: var=output.stdout_lines
