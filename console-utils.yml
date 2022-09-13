@@ -32,6 +32,20 @@
       shell: "brew install ripgrep"
       register: "output"
 
+    - name: "install prettyping"
+      shell: "brew install prettyping"
+      register: "output"
+
+    - name: "install exa"
+      shell: "brew install exa"
+      register: "output"
+
+    - name: "install lazydocker"
+      shell: "brew install jesseduffield/lazydocker/lazydocker"
+
+    - name: "install lazygit"
+      shell: "brew install jesseduffield/lazygit/lazygit"
+
 
     # TODO: add aliases to .zshrc
 
