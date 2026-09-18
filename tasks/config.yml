@@ -1,0 +1,65 @@
+---
+- name: Create configuration directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ config_home }}/fish/conf.d"
+    - "{{ config_home }}/herdr"
+    - "{{ config_home }}/opencode"
+    - "{{ config_home }}/nvim"
+    - "{{ ghostty_config_dir }}"
+
+- name: Install Fish console aliases and environment
+  ansible.builtin.copy:
+    src: fish/terminal.fish
+    dest: "{{ config_home }}/fish/conf.d/terminal.fish"
+    mode: "0644"
+    backup: true
+
+- name: Set Ghostty's subtly darker background
+  ansible.builtin.lineinfile:
+    path: "{{ ghostty_config_dir }}/config.ghostty"
+    regexp: '^\s*background\s*='
+    line: "background = {{ ghostty_background }}"
+    create: true
+    mode: "0644"
+    backup: true
+
+- name: Disable herdr onboarding
+  ansible.builtin.lineinfile:
+    path: "{{ config_home }}/herdr/config.toml"
+    regexp: '^onboarding\s*='
+    line: 'onboarding = false'
+    insertbefore: BOF
+    create: true
+    mode: "0644"
+    backup: true
+
+- name: Set herdr's Gruvbox theme
+  community.general.ini_file:
+    path: "{{ config_home }}/herdr/config.toml"
+    section: theme
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    mode: "0644"
+    backup: true
+  loop:
+    - { option: name, value: '"gruvbox"' }
+    - { option: auto_switch, value: 'false' }
+
+- name: Install OpenCode's Gruvbox UI configuration
+  ansible.builtin.copy:
+    src: opencode/tui.json
+    dest: "{{ config_home }}/opencode/tui.json"
+    mode: "0644"
+    backup: true
+
+- name: Install LazyVim configuration and locked plugin versions
+  ansible.builtin.copy:
+    src: nvim/
+    dest: "{{ config_home }}/nvim/"
+    mode: "0644"
+    directory_mode: "0755"
+    backup: true

@@ -1,52 +1,27 @@
 ---
-  - name: "Installing console utils"
-    hosts: localhost
-    connection: local 
-    tasks:
+- name: Set up the macOS terminal workspace
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars/main.yml
 
-    - name: "install fzf"
-      shell: "brew install fzf"
-      register: "output"
-    
-    - name: "install bat"
-      shell: "brew install bat"
-      register: "output"
-    
-    - name: "install fd"
-      shell: "brew install fd"
-      register: "output"
-    
-    - name: "install ncdu"
-      shell: "brew install ncdu"
-      register: "output"
+  pre_tasks:
+    - name: Require macOS
+      ansible.builtin.assert:
+        that: ansible_facts['system'] == 'Darwin'
+        fail_msg: This playbook provisions a macOS workstation with Homebrew.
+      tags: always
 
-    - name: "install procs"
-      shell: "brew install procs"
-      register: "output"
+  tasks:
+    - name: Install terminal applications
+      ansible.builtin.import_tasks: tasks/packages.yml
+      tags: packages
 
-    - name: "install tldr"
-      shell: "brew install tldr"
-      register: "output"
+    - name: Configure the terminal workspace
+      ansible.builtin.import_tasks: tasks/config.yml
+      tags: config
 
-    - name: "install ripgrep"
-      shell: "brew install ripgrep"
-      register: "output"
-
-    - name: "install prettyping"
-      shell: "brew install prettyping"
-      register: "output"
-
-    - name: "install exa"
-      shell: "brew install exa"
-      register: "output"
-
-    - name: "install lazydocker"
-      shell: "brew install jesseduffield/lazydocker/lazydocker"
-
-    - name: "install lazygit"
-      shell: "brew install jesseduffield/lazygit/lazygit"
-
-
-    # TODO: add aliases to .zshrc
-
-    - debug: var=output.stdout_lines
+    - name: Use Fish as the login shell
+      ansible.builtin.import_tasks: tasks/shell.yml
+      when: set_fish_login_shell | bool
+      tags: shell

@@ -1,0 +1,47 @@
+---
+- name: Locate Homebrew
+  ansible.builtin.command: /usr/bin/which brew
+  register: brew_executable
+  changed_when: false
+  check_mode: false
+
+- name: Find the Homebrew prefix
+  ansible.builtin.command:
+    argv: ["{{ brew_executable.stdout }}", --prefix]
+  register: brew_prefix
+  changed_when: false
+  check_mode: false
+
+- name: Check the Fish executable
+  ansible.builtin.stat:
+    path: "{{ brew_prefix.stdout }}/bin/fish"
+  register: fish_binary
+
+- name: Require an installed Fish before changing the login shell
+  ansible.builtin.assert:
+    that:
+      - fish_binary.stat.exists
+      - fish_binary.stat.executable
+    fail_msg: Install Fish with the packages tag before applying the shell tag.
+  when: not ansible_check_mode
+
+- name: Register Fish as an allowed login shell
+  ansible.builtin.lineinfile:
+    path: /etc/shells
+    line: "{{ brew_prefix.stdout }}/bin/fish"
+    state: present
+  become: true
+
+- name: Read the current login shell
+  ansible.builtin.command:
+    argv: [/usr/bin/dscl, '.', -read, "/Users/{{ setup_user }}", UserShell]
+  register: current_login_shell
+  changed_when: false
+  check_mode: false
+
+- name: Set Fish as the login shell
+  ansible.builtin.command:
+    argv: [/usr/bin/dscl, '.', -create, "/Users/{{ setup_user }}", UserShell, "{{ brew_prefix.stdout }}/bin/fish"]
+  become: true
+  when: current_login_shell.stdout.split()[-1] != brew_prefix.stdout ~ '/bin/fish'
+  changed_when: true

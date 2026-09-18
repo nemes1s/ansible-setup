@@ -1,0 +1,28 @@
+---
+setup_home: "{{ ansible_facts['env']['HOME'] }}"
+setup_user: "{{ ansible_facts['user_id'] }}"
+config_home: "{{ setup_home }}/.config"
+ghostty_config_dir: "{{ setup_home }}/Library/Application Support/com.mitchellh.ghostty"
+ghostty_background: "#242424"
+set_fish_login_shell: true
+
+homebrew_formulae:
+  - bat
+  - eza
+  - fd
+  - fish
+  - fzf
+  - git
+  - herdr
+  - htop
+  - lazydocker
+  - lazygit
+  - ncdu
+  - neovim
+  - node
+  - anomalyco/tap/opencode
+  - prettyping
+  - procs
+  - ripgrep
+  - tldr
+  - tree-sitter
