@@ -1,0 +1,42 @@
+---
+- name: Install the Claude Code CLI
+  ansible.builtin.shell: curl -fsSL https://claude.ai/install.sh | bash
+  args:
+    creates: "{{ setup_home }}/.local/bin/claude"
+
+- name: Install plannotator and its Claude Code skills
+  ansible.builtin.shell: curl -fsSL https://plannotator.ai/install.sh | bash
+  args:
+    creates: "{{ setup_home }}/.local/bin/plannotator"
+
+- name: Install Claude Code plugins from open-source marketplaces
+  ansible.builtin.command:
+    argv:
+      - "{{ setup_home }}/.local/bin/claude"
+      - plugin
+      - install
+      - "{{ item.name }}"
+      - --marketplace
+      - "{{ item.marketplace }}"
+      - --yes
+  loop: "{{ claude_plugins }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: plugin_install
+  changed_when: "'already installed' not in plugin_install.stdout"
+
+- name: Install standalone skills with the skills CLI
+  ansible.builtin.command:
+    argv: [npx, -y, skills, add, "{{ item.repo }}", --global, --agent, claude-code, --yes]
+  loop: "{{ claude_skill_repos }}"
+  loop_control:
+    label: "{{ item.repo }}"
+  args:
+    creates: "{{ setup_home }}/.claude/skills/{{ item.name }}"
+
+- name: Install personal skills
+  ansible.builtin.copy:
+    src: claude/skills/
+    dest: "{{ setup_home }}/.claude/skills/"
+    mode: preserve
+    directory_mode: "0755"

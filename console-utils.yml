@@ -21,6 +21,10 @@
       ansible.builtin.import_tasks: tasks/config.yml
       tags: config
 
+    - name: Install Claude Code plugins and skills
+      ansible.builtin.import_tasks: tasks/claude.yml
+      tags: claude
+
     - name: Use Fish as the login shell
       ansible.builtin.import_tasks: tasks/shell.yml
       when: set_fish_login_shell | bool

@@ -44,8 +44,8 @@ After installation:
 
 The Ruby configuration runs `bundle exec ruby-lsp` and `bundle exec rubocop --lsp`.
 Use your project's Ruby environment and install its bundle, including those gems.
-The Claude Code Neovim integration requires the Claude Code CLI to be installed
-and authenticated separately if you use it.
+The `claude` tag installs the Claude Code CLI; authenticate it yourself with `claude`.
+Work-specific marketplaces and plugins are not part of this repo.
 
 ## Apply only part of the setup
 
@@ -55,6 +55,9 @@ ansible-playbook console-utils.yml --tags packages
 
 # Apply dotfiles and themes only (no sudo or package installation).
 ansible-playbook console-utils.yml --tags config
+
+# Install Claude Code, its open-source plugins, and personal skills.
+ansible-playbook console-utils.yml --tags claude
 
 # Set Fish as the login shell after installing it.
 ansible-playbook console-utils.yml --tags shell --ask-become-pass
@@ -75,6 +78,10 @@ ansible-playbook console-utils.yml --check --diff --ask-become-pass
 | `~/.config/herdr/config.toml` | Sets onboarding and theme options, preserving other settings |
 | `~/.config/opencode/tui.json` | Managed UI config; provider/agent settings and credentials stay separate |
 | `~/.config/nvim/` | Copies the files under `files/nvim/`, including plugin lockfile; additional local files are retained |
+
+| `~/.local/bin/claude`, `~/.local/bin/plannotator` | Installed with the upstream installers when missing; never upgraded by the playbook |
+| `~/.claude/plugins/` | Plugins in `claude_plugins` installed via `claude plugin install`; existing installs are left at their version |
+| `~/.claude/skills/` | `claude_skill_repos` added with `npx skills add`; the skills under `files/claude/skills/` are copied in |
 
 Changed destination files receive timestamped Ansible backups alongside them.
 Edit the repository's managed files to persist customizations across future runs.

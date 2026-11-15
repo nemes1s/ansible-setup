@@ -26,3 +26,16 @@ homebrew_formulae:
   - ripgrep
   - tldr
   - tree-sitter
+
+# Claude Code plugins: plugin name plus the GitHub marketplace repo that offers it.
+claude_plugins:
+  - { name: linear, marketplace: anthropics/claude-plugins-official }
+  - { name: ruby-lsp, marketplace: anthropics/claude-plugins-official }
+  - { name: pyright-lsp, marketplace: anthropics/claude-plugins-official }
+  - { name: plannotator, marketplace: backnotprop/plannotator }
+  - { name: ponytail, marketplace: DietrichGebert/ponytail }
+  - { name: pstack, marketplace: michael-denyer/pstack-claude }
+
+# Standalone skills installed with `npx skills add` into ~/.claude/skills.
+claude_skill_repos:
+  - { name: unlazy, repo: Leonxlnx/unlazy }
