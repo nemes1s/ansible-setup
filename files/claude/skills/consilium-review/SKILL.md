@@ -11,7 +11,7 @@ Reuses `~/.claude/skills/consilium/scripts/consult.sh`. The review panel is `CON
 
 ## Step 0, Scratch worktree
 
-Check the branch out in a scratch worktree, never in the user's working copy. Put it under the repo's parent directory (for example `../review-<id>`), not under `/tmp`: OpenCode auto-denies reads outside the directory it is given, and a `/tmp` path is denied even when passed as that directory, so the model returns no answer. Everything you run or write during the review happens in this worktree and is deleted at the end.
+Check the branch out in a scratch worktree, never in the user's working copy. Everything you run or write during the review happens in this worktree and is deleted at the end. `consult.sh` passes the canonical path to OpenCode and rewrites the brief to match, because OpenCode resolves symlinks in its project dir (`/tmp` is `/private/tmp` on macOS) and auto-denies reads under any other prefix; if a model still reports `permission requested: external_directory`, the brief names a path outside the worktree.
 
 ## Step 1, Write the brief
 
